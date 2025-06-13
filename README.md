@@ -19,5 +19,3 @@ A third presence—the system voice—guides, mocks, and manipulates both charac
 - **Split-Level Gameplay**: After a key narrative event, the child and the shadow operate in different layers of the screen, representing emotional and physical separation.
 - **Betrayal Mechanic (Final Scene)**: The shadow gains a new button that can harm or hinder the child, reflecting the shift in power and trust.
 
-
-
