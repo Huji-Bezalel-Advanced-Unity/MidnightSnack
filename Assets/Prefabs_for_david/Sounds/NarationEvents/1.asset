@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f6f6e4ff4fbcd498dd9e9e816bd858, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  TriggerID: 101
+  VoiceLine: {fileID: 8300000, guid: d378252b56c31fe4e8d935b1f7ab3d4d, type: 3}
+  SubtitleText: "Careful now. \r\n\r\rYour shadow is right under that light.\r\r\r\r\nBut\r     
+    maybe he doesn't mind.\r\nHe is your shadow."
+  Delay: 0
+  Cooldown: 5
+  PlayOnlyOnce: 0
+  lastPlayedTime: -1000
+  hasBeenPlayed: 0

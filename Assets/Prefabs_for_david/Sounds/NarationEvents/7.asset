@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f6f6e4ff4fbcd498dd9e9e816bd858, type: 3}
+  m_Name: 7
+  m_EditorClassIdentifier: 
+  TriggerID: 107
+  VoiceLine: {fileID: 8300000, guid: 2d3a2cd3f30a4fe48a5cc985952b215f, type: 3}
+  SubtitleText: "Hey boy,\nAlone at last. No shadow, no help, no distractions.\r\nFeeling
+    brave? Or just... very, very small?\r\nI thought you didn\u2019t need him.\nHey
+    Shadow,\nLook at you, glowing. Unburdened.\r\nHe left you behind, and yet...
+    you rise.\r\nHow poetic. The discarded piece turns out to be the strongest.\r\n\n\r\n"
+  Delay: 0
+  Cooldown: 5
+  PlayOnlyOnce: 0
+  lastPlayedTime: -1000
+  hasBeenPlayed: 0

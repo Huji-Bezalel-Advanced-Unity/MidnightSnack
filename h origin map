@@ -1,0 +1,86 @@
+[33me10af87[m[33m ([m[1;36mHEAD -> [m[1;32mmap[m[33m, [m[1;31morigin/map[m[33m)[m merge
+[33m0f8214a[m fix
+[33m7e25b45[m Added Narration Events & Sounds & Positions
+[33mc929891[m fix
+[33m24ef20d[m fix
+[33m4c86ab5[m fix
+[33m92d1fc2[m ...
+[33m4ff06be[m fix
+[33m0710e8b[m Start working on narration
+[33m9d0fc7e[m fix
+[33m9047f55[m fix
+[33m2da1e91[m added animations and some clips
+[33m79d6063[m some fixes
+[33mb531161[m moving platfom updated
+[33m0a557bd[m camera update
+[33m29b0ba1[m some fixes
+[33m2e06dbd[m סידור מסכים של כל השבלים
+[33med4d1a9[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33m485ae12[m sprites added
+[33m910f1d8[m Create a Narration Events and connect them to NarratorController Prefab
+[33ma2429b4[m parallax added
+[33m25aa767[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33m9d41948[m ...
+[33m0545586[m merge
+[33mff61674[m commit before merge
+[33m6263799[m התחלת הטעמה של ארט
+[33m3ae9960[m moving platform continuous loop mode fixed
+[33mee4aa60[m ...
+[33m830148d[m small video player fix
+[33m857e6cf[m added video player
+[33mcb0a5a9[m camera controler improved, now used for one way barrier
+[33mb7a3faf[m door updated
+[33mca82531[m added game ending manager
+[33mc1f408a[m map updated, some small fixes and some more
+[33m7d91d25[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33mcaf65f8[m bug fix
+[33m637aa48[m הוספה סקיצה דמויות למפה
+[33ma22ea79[m small map change
+[33m2fde35d[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33m0a14016[m button fix
+[33m8946814[m After playtest for screen 3 and 4
+[33m56b2943[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33mcc3df7b[m some changes
+[33m320dff0[m Merge remote-tracking branch 'origin/map' into map
+[33mb28bf1b[m Added all levels implement
+[33mef99e0a[m light prefab fix
+[33m2ba7e1c[m objects adapted to be used only by the dark lord
+[33mfbf8421[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33m5229588[m some changes
+[33m30b4a4a[m fix Camera, Create Camera Prefab and add a new Scene
+[33mb3b5027[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/design[m[33m, [m[1;31morigin/HEAD[m[33m)[m light fixed
+[33ma72b8e4[m light fixed
+[33me771770[m Create Camera Controller script
+[33m34724d6[m add Camera Controller script
+[33mc441721[m some light changes
+[33m51b5775[m map path created
+[33m9b8d6df[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33mfe9041c[m some changes
+[33mc9bb0e5[m Added Light scripts and handle merge
+[33m3d19139[m Added Light assets
+[33m4c52db2[m Merge branch 'map' of https://github.com/bezalel-games/class2025-gaming-lab-ex2-team5 into map
+[33m1b1a327[m door script fixed
+[33mbb97568[m Start working on Gameloop & map & zones on another scene
+[33m5afb71b[m minor changes
+[33m990882c[m feat: Add Lever, Plate, Pushable; Update MovingPlatform modes
+[33mc214f1a[m final for now
+[33m47a4407[m fix: Projectiles now correctly stop ladder interaction
+[33m8316172[m added turrets with knockback projectiles
+[33m8908a07[m added door
+[33ma35d03d[m some bugs fixed
+[33mae73a4f[m feat: Add moving & disappearing platforms, refactor player state/interaction
+[33mdafaa7e[m feat: Implement 2-player setup with unique abilities, add disappearing platform, switch active scene
+[33me8d12d3[m NPC pathfinds to last known pos as fallback
+[33m4fcbef2[m Enable NPC rope usage
+[33m16d2930[m Enable NPC ladder climbing
+[33ma7a7f5e[m feat: Add NPCMovement, LevelGridData (auto-gen), GridPathfinder for enemy AI foundation
+[33md4e239a[m backup before change
+[33mc4a726e[m Refactor(Interaction): Introduce IInteractable, TrajectoryMover; Update Player/Rope/Ladder for multi-user & NPC support
+[33mc7bd5dd[m add moving walls
+[33m4bd81e0[m add button object
+[33m400b3be[m improved event system, rope and ladder
+[33m6b2a8a3[m platform collider fixed
+[33m2d42251[m updated rope and ladder
+[33m98dda67[m Add Event Manager, update Player/Rope/Ladder scripts
+[33m725c878[m started to work on the map, add ladder and rope
+[33m03e204f[m[33m ([m[1;32mmain[m[33m)[m Initial commit

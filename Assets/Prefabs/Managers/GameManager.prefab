@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7285534526439245835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3843470935557440180}
+  - component: {fileID: 8398610722638120062}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3843470935557440180
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7285534526439245835}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 104.056915, y: -10.806034, z: 9.437989}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8398610722638120062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7285534526439245835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9bd7bf26aeb6c44aa22100f3d731598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMenuSceneName: MainMenu
+  gameWorldSceneName: GameWorld
+  videoPlayerPrefab: {fileID: 2124406591566952721, guid: 6cfe872c830b886488463749c3fec07f, type: 3}
+  introVideo: {fileID: 32900000, guid: 408cd934966e0f241b37d358e6447357, type: 3}
+  middleVideo: {fileID: 32900000, guid: b631e0433b757d0479b70402849e6182, type: 3}
+  cooperativeEndingVideo: {fileID: 32900000, guid: 14e39badd61c8b540b3178a032b09c59, type: 3}
+  soloEndingVideo: {fileID: 32900000, guid: 0fe9bd274e13719448aea63660f0281b, type: 3}
+  middleVideoTriggerID: PlayMiddleVideo
