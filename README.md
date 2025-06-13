@@ -1,20 +1,23 @@
-# Midnight-Snack, by Naama Even Oz
-A 3D memory-based horror game set inside a fridge. You play as a chocolate snack trying to avoid being eaten by hungry housemates during midnight.
+# A part Apart
 
-### Description
-You are a chocolate snack hidden in the fridge. As long as it is dark, no one opens the fridge.
+##  About the Game
 
-When the fridge is opened, light comes in, revealing your location, and hands reach in to grab a midnight snack. Your goal is to stay hidden and avoid being eaten!
+*A part Apart* is a psychological 2D puzzle-platformer that explores the fragile and shifting relationship between a child and their shadow. The player must control both characters—one living in light, the other confined to darkness—solving puzzles together while facing emotional and narrative tension. 
 
-### Gameplay Mechanics
-- **Darkness Phase:** The fridge is closed, and you must **rearrange the food items** to hide yourself.
-- **Memory Challenge:** You need to **remember the layout** of the fridge because you must adjust it while it's dark.
-- **Light Phase:** When the fridge is opened, the light turns on, and you **cannot move**.
-- **Avoiding Capture:** Hands will reach for visible food items. If you are exposed, **you lose!**
+As the game unfolds, the illusion of choice becomes central: the child turns to the shadow only when it helps him move forward, and discards it when it's no longer useful. The shadow is always there—but its patience is not eternal.
 
-### How to Play
-1. **Memorize the order** of the food items while the light is on.
-2. When darkness returns, **move and rearrange the food** to keep yourself hidden.
-3. **Survive multiple fridge openings** without being caught!
+A third presence—the system voice—guides, mocks, and manipulates both characters, slowly pushing them apart, questioning their trust, and turning their bond into a test of control and consequence.
+
+---
+
+##  Core Mechanics
+
+- **Dual-Control Puzzle Solving**: Navigate the world by switching between the child and the shadow, each with unique abilities.
+- **Shadow-Layer Interaction**: The shadow can only move in dark areas and interact with objects within a separate shadow layer.
+- **Emotional Choices**: The game includes branching emotional decisions that influence how the two characters interact—but outcomes may defy expectations.
+- **AI System Voice**: A manipulative narrator reacts to players' choices, undermining confidence and creating tension.
+- **Split-Level Gameplay**: After a key narrative event, the child and the shadow operate in different layers of the screen, representing emotional and physical separation.
+- **Betrayal Mechanic (Final Scene)**: The shadow gains a new button that can harm or hinder the child, reflecting the shift in power and trust.
+
 
 
