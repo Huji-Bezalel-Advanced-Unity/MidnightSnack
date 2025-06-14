@@ -11,6 +11,7 @@ TagManager:
   - Turret
   - Light
   - Pushable
+  - SubtitleText
   layers:
   - Default
   - TransparentFX
@@ -39,7 +40,7 @@ TagManager:
   - LightGround
   - LightObstacle
   - WallForObjects
-  - 
+  - Climbable
   - 
   - 
   - 

@@ -8,18 +8,16 @@ using System.Linq;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Animator))]
-// Implement interfaces for Dark Player's capabilities
 public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteractionController, IMovementInputProvider
 {
     [SerializeField] private AudioClip hitSound; 
 
-    // --- Input Keys ---
     [SerializeField] private KeyCode leftKey = KeyCode.A;
     [SerializeField] private KeyCode rightKey = KeyCode.D;
     [SerializeField] private KeyCode upKey = KeyCode.W;
-    [SerializeField] private KeyCode downKey = KeyCode.S; // Defined if needed for climbing down
+    [SerializeField] private KeyCode downKey = KeyCode.S; 
     [SerializeField] private KeyCode jumpKey = KeyCode.W;
-    [SerializeField] private KeyCode abilityKey = KeyCode.LeftShift; // Phase Key
+    [SerializeField] private KeyCode abilityKey = KeyCode.LeftShift; 
     [SerializeField] private KeyCode interactKey = KeyCode.E;
 
     [Header("Respawn Settings")]
@@ -27,18 +25,16 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     [SerializeField] private float stuckInLightDuration = 0.5f;
     [Tooltip("The maximum speed magnitude considered 'stuck' while being pushed by light.")]
     [SerializeField] private float stuckVelocityThreshold = 0.1f;
-// --- NEW OFFSET FIELDS ---
     [Tooltip("The small offset to apply to the player's position on respawn (e.g., to nudge them out of the floor).")]
-    [SerializeField] private Vector2 respawnOffset = new Vector2(0, 0.5f); // Example: Nudge slightly upwards
-// -------------------------
+    [SerializeField] private Vector2 respawnOffset = new Vector2(0, 0.5f); 
     
     [Header("Light Interaction")]
     [Tooltip("Points on the player used to check for light exposure (e.g., feet, center, head). Create Empty GameObjects as children.")]
     [SerializeField] private Transform[] lightCheckPoints;
     [Tooltip("Layer mask containing the 'LightArea' trigger layer.")]
-    [SerializeField] private LayerMask lightAreaLayer; // Assign the LightArea layer here
+    [SerializeField] private LayerMask lightAreaLayer; 
     [Tooltip("Layer mask containing objects that block light (e.g., 'LightBlocker').")]
-    [SerializeField] private LayerMask lightBlockerLayer; // Assign the LightBlocker layer here
+    [SerializeField] private LayerMask lightBlockerLayer; 
     [Tooltip("Force applied to push the player out of unblocked light.")]
     [SerializeField] private float lightPushForce = 50f;
 
@@ -82,7 +78,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     
     
 
-    // --- Components ---
     public Rigidbody2D Rb { get; private set; }
     public Collider2D Coll { get; private set; }
     public Transform Transform { get; private set; }
@@ -91,20 +86,18 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     public float InteractionRadiusProp => interactionRadius;
     public Transform InteractionCheckPointProp => interactionCheckPoint;
 
-    // --- State Machine ---
-    private IPlayerState currentState; // Use backing field for explicit interface implementation
+    private IPlayerState currentState; 
     public GroundedState GroundedStateInstance { get; private set; }
     public AirborneState AirborneStateInstance { get; private set; }
     public ClimbingState ClimbingStateInstance { get; private set; }
     public PhasingState PhasingStateInstance { get; private set; }
 
-    // --- Current State Info ---
     public bool IsGrounded { get; private set; }
     public Vector2 GroundNormal { get; private set; }
     public int JumpsRemaining { get; private set; } // Always 0 or 1
     public float CurrentGravityScale { get; private set; }
 
-    // --- Input State ---
+    
     public float HorizontalInput { get; private set; }
     public float VerticalInput { get; private set; }
     public bool JumpInputDownThisFrame { get; private set; }
@@ -115,7 +108,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     public float CoyoteTimeCounter => coyoteTimeCounter;
     
     private Animator animator;
-    // --- Animator Parameter Hashes ---
     private readonly int animParamIsGrounded = Animator.StringToHash("IsGrounded");
     private readonly int animParamHorizontalSpeed = Animator.StringToHash("HorizontalSpeed");
     private readonly int animParamVerticalSpeed = Animator.StringToHash("VerticalSpeed");
@@ -124,7 +116,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     
     private bool isCurrentlyStuckPlayingAnimation = false;
     
-    // --- Internal Timers & Flags ---
     private const int MAX_JUMPS = 1;
     private float coyoteTimeCounter;
     private float jumpBufferCounter;
@@ -134,7 +125,7 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     
     private bool isInUnblockedLight = false;
     private Vector2 lightPushDirection = Vector2.zero;
-    private float stuckInLightTimer = 0f; // Timer for checking if stuck
+    private float stuckInLightTimer = 0f; 
 
     private bool endGame = false;
     private bool endGameInputTriggeredThisSession = false;
@@ -142,13 +133,12 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     private bool isInFinalSceneWaitingForInput = false; 
     private bool finalInputProcessed = false;
     
-    public Transform TheEndPoint; // Assign this in the Inspector
-    public float delayBeforeFinalEvent = 2.0f; // Set your desired delay in seconds
+    public Transform TheEndPoint; 
+    public float delayBeforeFinalEvent = 2.0f; 
 
     private bool finalEventTriggered = false;
     private Coroutine delayedFinalEventCoroutine = null;
 
-    // --- Unity Lifecycle Methods ---
 
     private void Awake()
     {
@@ -171,12 +161,10 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         isInFinalSceneWaitingForInput = false;
         finalInputProcessed = false;
 
-        // --- SUBSCRIBE TO NEW EVENT ---
         EventManager.OnPlayersTeleportedForEndGame += PrepareForFinalInput;
         EventManager.OnDarkPlayerStuckInLight += OnThisPlayerStuckInLight;
         EventManager.OnGameEndedStep2 += HandleGameEndedStep2;
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
-        // -----------------------------
 
         Debug.Log($"{gameObject.name} (Dark Player - StateMachine) Initialized.");
         
@@ -185,17 +173,15 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     void OnActiveSceneChanged(Scene previousScene, Scene newScene)
     {
         Debug.Log($"DarkPlayer: Scene changed from '{previousScene.name}' to '{newScene.name}'");
-        if (newScene.name == "Final") // <<< YOUR FINAL SCENE NAME HERE
+        if (newScene.name == "Final") 
         {
             EnterFinalSceneInputState();
         }
         else
         {
-            // If loaded into any other scene (e.g., GameWorld from MainMenu), ensure not in final input mode
             isInFinalSceneWaitingForInput = false;
             finalInputProcessed = false;
-            if (Rb != null) Rb.isKinematic = false; // Ensure physics is active for gameplay
-            // Reset other relevant game state if necessary
+            if (Rb != null) Rb.isKinematic = false; 
         }
     }
 
@@ -203,9 +189,8 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     {
         Debug.Log($"DarkPlayerController ({gameObject.name}): Entering FinalSceneInputState. Waiting for SPACE key.");
         isInFinalSceneWaitingForInput = true;
-        finalInputProcessed = false; // Allow input for this new session in final scene
+        finalInputProcessed = false; 
 
-        // Make player static, disable normal controls/states
         if (Rb != null)
         {
             Rb.linearVelocity = Vector2.zero;
@@ -213,25 +198,21 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         }
         if (currentState != null && (currentState == GroundedStateInstance || currentState == AirborneStateInstance))
         {
-            // Don't change state if already in a special state like Phasing/Climbing
         } else {
-            ChangeState(GroundedStateInstance); // Or a specific "WaitingInFinalScene" state
+            ChangeState(GroundedStateInstance); 
         }
 
 
-        // Optional: Set animator to a specific "waiting" pose for the final scene
         if (animator != null)
         {
-            // Ensure not stuck in a "stuck" animation if carried over
             isCurrentlyStuckPlayingAnimation = false;
-            animator.ResetTrigger(animParamStuckInLightTrigger); // Reset trigger if it was set
-            // animator.SetBool(animParamIsStuckInLightBool, false); // If you were using a bool
+            animator.ResetTrigger(animParamStuckInLightTrigger); 
+
 
             animator.SetFloat(animParamHorizontalSpeed, 0f);
             animator.SetFloat(animParamVerticalSpeed, 0f);
-            animator.SetBool(animParamIsGrounded, true); // Assume standing pose
-            // You might want a specific animation like "FinalSceneIdle"
-            // animator.Play("FinalSceneIdle");
+            animator.SetBool(animParamIsGrounded, true); 
+         
         }
     }
 
@@ -239,8 +220,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     private void OnDestroy()
     {
         EventManager.OnDarkPlayerStuckInLight -= OnThisPlayerStuckInLight;
-        // EventManager.OnGameEndedStep2 -= HandleGameEndedStep2;
-        // EventManager.OnPlayersTeleportedForEndGame -= PrepareForFinalInput;
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
     }
 
@@ -257,27 +236,25 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
      {
          if ( ((1 << other.gameObject.layer) & lightAreaLayer.value) != 0 )
          {
-             CheckLightExposure(other); // Sets isInUnblockedLight = true if needed
+             CheckLightExposure(other); 
          }
      }
      
      private void PrepareForFinalInput()
      {
          Debug.Log($"DarkPlayerController ({gameObject.name}): Received OnPlayersTeleportedForEndGame. Teleporting to end position.");
-         transform.position = newPositionEnd; // Use the correct variable for final end position
+         transform.position = newPositionEnd; 
          Rb.position = newPositionEnd;
          Rb.linearVelocity = Vector2.zero;
          Rb.isKinematic = true; 
     
-         endGame = true; // Now enable waiting for 'any key'
+         endGame = true; 
          Debug.Log($"DarkPlayerController ({gameObject.name}): Teleported. 'endGame' flag set. Waiting for final input.");
 
-         // Optional: Set animator to a specific pose
          if (animator != null)
          {
              animator.SetFloat(animParamHorizontalSpeed, 0f);
              animator.SetFloat(animParamVerticalSpeed, 0f);
-             // animator.SetBool(animParamIsGrounded, true); // Or a specific "waiting" animation
          }
      }
      
@@ -289,13 +266,10 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
 
     private void CheckLightExposure(Collider2D lightAreaTrigger)
     {
-        // Try to get the identifier script to find the light's actual source position
         LightSourceIdentifier lightSource = lightAreaTrigger.GetComponent<LightSourceIdentifier>();
         if (lightSource == null || lightSource.SourceTransform == null)
         {
-            // If the trigger doesn't have the identifier, maybe use the trigger's center? Less accurate.
-            // Or just ignore this light area trigger.
-            // Debug.LogWarning($"Light Area trigger '{lightAreaTrigger.name}' missing LightSourceIdentifier.", lightAreaTrigger);
+            
             return;
         }
 
@@ -310,66 +284,56 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         }
 
 
-        // Check each point on the player's body
         foreach (Transform checkPoint in lightCheckPoints)
         {
-            if (checkPoint == null) continue; // Skip if a point wasn't assigned properly
+            if (checkPoint == null) continue; 
 
             Vector2 playerPoint = checkPoint.position;
             Vector2 directionToLight = (lightOrigin - playerPoint).normalized;
             float distanceToLight = Vector2.Distance(playerPoint, lightOrigin);
 
-            // Cast a line from the player check point towards the light source
             RaycastHit2D hit = Physics2D.Linecast(playerPoint, lightOrigin, lightBlockerLayer);
 
-            Color rayColor = Color.yellow; // Default: Assume blocked or unclear
+            Color rayColor = Color.yellow; 
 
-            // Analyze the hit result
             if (hit.collider == null)
             {
-                // Nothing was hit on the LightBlocker layer between player and light source.
-                // This means the light is UNBLOCKED for this check point.
+     
                 foundUnblockedLight = true;
-                cumulativePushDirection += (playerPoint - lightOrigin).normalized; // Direction away from light
-                rayColor = Color.red; // UNBLOCKED
-                // Optional: break here if any unblocked point is enough to trigger reaction
-                // break;
+                cumulativePushDirection += (playerPoint - lightOrigin).normalized; 
+                rayColor = Color.red;
+               
             }
             else
             {
-                // Something on the LightBlocker layer was hit. Light is BLOCKED for this check point.
-                 rayColor = Color.green; // BLOCKED
+                 rayColor = Color.green; 
             }
 
 #if UNITY_EDITOR
-            Debug.DrawLine(playerPoint, lightOrigin, rayColor, 0.0f); // Make sure this line is active
+            Debug.DrawLine(playerPoint, lightOrigin, rayColor, 0.0f); 
 #endif
         }
 
-        // Update the player's overall state based on the checks
         if (foundUnblockedLight)
         {
             isInUnblockedLight = true;
-            // Average the push directions (or just use direction from light source)
             lightPushDirection = (cumulativePushDirection.magnitude > 0.01f) ? cumulativePushDirection.normalized : (Vector2.right * -Mathf.Sign(lightOrigin.x - Rb.position.x)); // Fallback push direction
         }
-        // If no unblocked light was found in THIS trigger area, isInUnblockedLight remains false
-        // (it will be reset at the start of FixedUpdate)
+
     }
 
     private void Update()
     {
-        if (isInFinalSceneWaitingForInput) // <<< CHECK NEW FLAG
+        if (isInFinalSceneWaitingForInput) 
         {
-            if (!finalInputProcessed && Input.GetKeyDown(KeyCode.Space)) // Listen for SPACE specifically
+            if (!finalInputProcessed && Input.GetKeyDown(KeyCode.Space)) 
             {
                 Debug.Log($"DarkPlayerController ({gameObject.name}): SPACE key pressed in Final Scene. Triggering OnGameEndedFinal.");
                 EventManager.TriggerOnGameEndedFinal();
-                finalInputProcessed = true; // Prevent multiple triggers from one press or holding
-                // Optionally, disable this script or further input processing here
-                // this.enabled = false;
+                finalInputProcessed = true; 
+       
             }
-            return; // Skip normal Update logic if in this special waiting state
+            return; 
         }
         if (endGame)
         {
@@ -379,29 +343,11 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
                     !UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject)
                 {
                     Debug.Log($"DarkPlayerController ({gameObject.name}): 'Any Key' pressed during (old) endGame. Triggering OnGameEndedFinalInputReceived (OBSOLETE PATH?).");
-                    // EventManager.TriggerGameEndedFinalInputReceived(); // This was for the older sequence
                     endGame = false; 
                 }
             }
             return; 
-            /*if (Input.anyKeyDown)
-            {
-                // Check if a UI element is selected, if so, don't trigger.
-                // This prevents UI clicks on potential "skip video" buttons from also triggering this.
-                if (UnityEngine.EventSystems.EventSystem.current != null &&
-                    UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject != null)
-                {
-                    // A UI element is selected, probably a button from the video player UI
-                    // Debug.Log("DarkPlayer: AnyKeyDown detected but UI element is selected. Ignoring for OnGameEndedFinalInputReceived.");
-                }
-                else
-                {
-                    Debug.Log($"DarkPlayerController ({gameObject.name}): 'Any Key' pressed during endGame. Triggering OnGameEndedFinalInputReceived.");
-                    EventManager.TriggerGameEndedFinalInputReceived();
-                    endGame = false; // Prevent re-triggering
-                }
-            }
-            return; */
+          
         }
         ReadInput();
         currentState?.HandleInput(this);
@@ -413,22 +359,19 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         UpdateTimers();
         currentState?.UpdateLogic(this);
 
-        // --- NEW: Update Animator Parameters ---
         UpdateAnimatorParameters();
-        // -------------------------------------
     }
 
     private IEnumerator DelayedTriggerFinalEvent(float delay)
     {
         Debug.Log($"Waiting for {delay} seconds before triggering OnGameEndedFinal...");
-        yield return new WaitForSeconds(delay); // Wait for the specified duration
+        yield return new WaitForSeconds(delay); 
 
         Debug.Log("Delay complete. Triggering EventManager.OnGameEndedFinal().");
         EventManager.TriggerOnGameEndedFinal();
 
-        delayedFinalEventCoroutine = null; // Clear the coroutine reference
-        // Optionally, you might want to disable this script or the GameObject now
-        // this.enabled = false;
+        delayedFinalEventCoroutine = null; 
+      
     }
     
     public void ResetFinalEventTrigger()
@@ -444,21 +387,20 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     
     private void FixedUpdate()
     {
-        if (!finalEventTriggered && transform.position.x > TheEndPoint.position.x) // Use EndPoint.position.x
+        if (!finalEventTriggered && transform.position.x > TheEndPoint.position.x) 
         {
             Debug.Log($"Condition met: Player X ({transform.position.x}) > EndPoint X ({TheEndPoint.position.x}). Starting delayed event trigger.");
             
-            // Ensure we only start the coroutine once
             if (delayedFinalEventCoroutine == null)
             {
                 delayedFinalEventCoroutine = StartCoroutine(DelayedTriggerFinalEvent(delayBeforeFinalEvent));
             }
-            finalEventTriggered = true; // Mark that we've started the process
+            finalEventTriggered = true; 
         }
             
-        if (isInFinalSceneWaitingForInput || (endGame && Rb.isKinematic)) // Also check the old endGame if kinematic
+        if (isInFinalSceneWaitingForInput || (endGame && Rb.isKinematic)) 
         {
-            if(!Rb.isKinematic) Rb.linearVelocity = Vector2.zero; // Ensure it's not moving if somehow not kinematic
+            if(!Rb.isKinematic) Rb.linearVelocity = Vector2.zero; 
             return;
         }
         
@@ -494,25 +436,20 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
 
         if (isBeingPushedAndStuck)
         {
-            // --- MODIFICATION: Only set the Animator flag here ---
-            if (animator != null && !isCurrentlyStuckPlayingAnimation) // Use script flag
+            if (animator != null && !isCurrentlyStuckPlayingAnimation) 
             {
                 Debug.Log($"Dark Player '{gameObject.name}' detected as stuck in light. Triggering 'StuckInLightTrigger' animation.");
-                animator.SetTrigger(animParamStuckInLightTrigger); // <<< TRIGGER THE ANIMATION
-                isCurrentlyStuckPlayingAnimation = true;          // <<< SET SCRIPT FLAG
+                animator.SetTrigger(animParamStuckInLightTrigger); 
+                isCurrentlyStuckPlayingAnimation = true;          
 
                 if (currentState != PhasingStateInstance && currentState != ClimbingStateInstance)
                 {
                     Rb.linearVelocity = Vector2.zero;
-                    // Consider disabling input or changing to a "stunned" player state here
-                    // to prevent movement while the "stuck" animation plays.
                 }
             }
             stuckInLightTimer = 0f; 
-            // EventManager.TriggerDarkPlayerStuckInLight(this) is called by Animation Event.
         }
-        // Removed else block for animator.SetBool(animParamIsStuckInLight, false);
-        // This will be handled after teleport or by the state the player transitions to.
+     
 
         currentState?.UpdatePhysics(this);
 
@@ -527,9 +464,9 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
             if ((JumpBufferCounter > 0f || JumpInputDownThisFrame) && CoyoteTimeCounter > 0f) { ExecuteJump(); jumpExecuted = true; }
             else if ((JumpBufferCounter > 0f || JumpInputDownThisFrame) && IsGrounded) { ExecuteJump(); jumpExecuted = true; }
             
-            if (jumpExecuted && animator != null) // If a jump was executed this frame
+            if (jumpExecuted && animator != null) 
             {
-                animator.SetTrigger(animParamJumpTrigger); // <<< TRIGGER JUMP ANIMATION
+                animator.SetTrigger(animParamJumpTrigger); 
             }
 
             if (jumpExecuted || JumpBufferCounter > 0f && !IsGrounded && CoyoteTimeCounter <= 0f) ResetJumpBuffer();
@@ -539,28 +476,19 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     public void TriggerStuckInLightEventFromAnimation()
     {
         Debug.Log($"DarkPlayerController ({gameObject.name}): AnimationEvent 'TriggerStuckInLightEventFromAnimation' called at end of death/stuck animation.");
-        
-        // --- MODIFIED BEHAVIOR ---
-        // Instead of directly triggering the teleport and camera move (OnDarkPlayerStuckInLight),
-        // we now trigger an event that the StuckEventUIManager will listen to.
-        // The StuckEventUIManager will then handle the UI sequence (canvas, buttons, black screen, sound)
-        // and after that sequence, it will trigger the OnDarkPlayerStuckInLight event.
+
         EventManager.TriggerShowStuckDecisionUI(this);
-        // --- ----------------- ---
     }
     
     private void UpdateAnimatorParameters()
     {
         if (animator == null) return;
 
-        // If the "StuckInLight" animation is playing, prevent normal movement animations.
-        // isCurrentlyStuckPlayingAnimation is more reliable than GetCurrentAnimatorStateInfo if transitions are complex.
         if (isCurrentlyStuckPlayingAnimation || 
             currentState == PhasingStateInstance || 
             currentState == ClimbingStateInstance)
         {
-            // If stuck, ensure horizontal speed is zeroed for animator if the animation itself doesn't do it
-            // animator.SetFloat(animParamHorizontalSpeed, 0f); 
+          
             return; 
         }
 
@@ -590,122 +518,26 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     {
         Debug.Log($"DarkPlayerController ({gameObject.name}): Entering EndGameInputState. Waiting for any key.");
         this.endGame = true;
-        this.Rb.isKinematic = true; // Ensure player is static
+        this.Rb.isKinematic = true; 
         this.Rb.linearVelocity = Vector2.zero;
 
-        // Optional: Set animator to a specific "waiting for input" pose
         if (animator != null)
         {
             animator.SetFloat(animParamHorizontalSpeed, 0f);
             animator.SetFloat(animParamVerticalSpeed, 0f);
-            // You might want a specific "EndWait" animation/state
-            // animator.Play("EndGameWaitingPose"); 
+ 
         }
     }
     
-    public void HandleStuckInLight() // This is the method you'll customize
+    public void HandleStuckInLight() 
     {
         Debug.Log($"DarkPlayerController ({gameObject.name}): Executing HandleStuckInLight().");
-
-        // --- Implement your desired "stuck" behavior here ---
-        // Examples:
-        // 1. Play a "struggling" or "dissolving" animation.
-        // 2. Make the player invulnerable for a short time if they "break free".
-        // 3. Reduce player health (if applicable).
-        // 4. Trigger a game over for this player.
-        // 5. Teleport to a safe spot (similar to old RespawnPlayer but now event-driven).
-
-        // For example, let's just stop movement and print a message for now.
+        
         Rb.linearVelocity = Vector2.zero;
         Rb.angularVelocity = 0f;
-
-        // Maybe change to a specific "StunnedByLightState" if you want complex behavior
-        // ChangeState(StunnedByLightStateInstance); 
-
-        // Or if you want to simply "kill" or reset the player:
-        // SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Simple level reset
-        // Or call a GameManager to handle player death/respawn.
 
         Debug.LogWarning($"Dark Player '{gameObject.name}' is now officially handled as STUCK. Implement specific game logic here!");
     }
-    // -----------------------------------------------------------
-
-    /*
-    // --- NEW Respawn Method ---
-    private void RespawnPlayer()
-    {
-        // 1. Calculate Spawn Position (Current position + offset)
-        Vector2 currentPosition = Rb.position;
-        Vector2 spawnPosition = currentPosition + respawnOffset; // Apply the small offset
-
-        // --- Safety Check: Ensure new position isn't inside a solid object ---
-        // This is crucial to prevent respawning into another stuck state.
-        // We can do a quick overlap check.
-        Collider2D[] collidersAtSpawn = Physics2D.OverlapBoxAll(
-            spawnPosition + (Vector2)Coll.offset, // Adjust for collider offset
-            Coll.bounds.size,                     // Use player's collider size
-            Transform.rotation.eulerAngles.z,     // Player's rotation
-            solidLayers                           // Use the same solidLayers mask as phase ability
-        );
-
-        if (collidersAtSpawn.Length > 0)
-        {
-            Debug.LogWarning($"Respawn offset ({respawnOffset}) would place player inside a solid object. Trying opposite offset or a fallback.");
-            // Option 1: Try opposite offset
-            Vector2 alternativeSpawnPosition = currentPosition - respawnOffset;
-            Collider2D[] collidersAtAlternativeSpawn = Physics2D.OverlapBoxAll(
-                alternativeSpawnPosition + (Vector2)Coll.offset,
-                Coll.bounds.size,
-                Transform.rotation.eulerAngles.z,
-                solidLayers
-            );
-
-            if (collidersAtAlternativeSpawn.Length == 0)
-            {
-                spawnPosition = alternativeSpawnPosition;
-            }
-            else
-            {
-                // Option 2: Fallback to a very small upward nudge if both fail, or a "safe spot" if you have one
-                Debug.LogWarning("Both primary and alternative respawn offsets failed. Nudging slightly upwards from current.");
-                spawnPosition = currentPosition + new Vector2(0, Coll.bounds.extents.y * 1.1f); // Nudge just above current
-                // Or, you could teleport to a predefined safe spot if available in the scene/level data.
-            }
-        }
-        // ---------------------------------------------------------------------
-
-        // 2. Reset Physics State
-        Rb.linearVelocity = Vector2.zero;
-        Rb.angularVelocity = 0f;
-        Rb.position = spawnPosition; // Instantly move to the (hopefully) safe offset position
-        Rb.Sleep();
-    
-        // 3. Reset Internal Logic State
-        stuckInLightTimer = 0f;
-        isInUnblockedLight = false;
-        ResetJumpBuffer();
-        ResetCoyoteTimer();
-        JumpsRemaining = MAX_JUMPS;
-        // phaseCooldownTimer = 0f; // Optional
-
-        // 4. Recalculate Grounding and Set State at Spawn Point
-        CheckIfGrounded();
-        if (IsGrounded)
-        {
-            ChangeState(GroundedStateInstance);
-        }
-        else
-        {
-            JumpsRemaining = 0;
-            ChangeState(AirborneStateInstance);
-        }
-
-        Debug.Log($"Player respawned with offset at {spawnPosition}");
-    }
-    */
-    
-
-    // --- State Machine Management ---
     public void ChangeState(IPlayerState newState)
     {
         if (newState == null || newState == currentState) return;
@@ -721,7 +553,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         currentState.EnterState(this);
     }
 
-    // --- Input Reading ---
     private void ReadInput()
     {
         JumpInputDownThisFrame = false;
@@ -762,7 +593,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         if (lastInputDir == Vector2.down || lastInputDir == Vector2.zero) { lastInputDir = Vector2.right * Mathf.Sign(Transform.localScale.x); }
     }
 
-    // --- Timer Updates ---
     private void UpdateTimers()
     {
         if (coyoteTimeCounter > 0) coyoteTimeCounter -= Time.deltaTime;
@@ -770,7 +600,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         if (phaseCooldownTimer > 0) phaseCooldownTimer -= Time.deltaTime;
     }
 
-    // --- Physics & Grounding ---
     private void CheckIfGrounded()
     {
         bool groundDetected = false;
@@ -810,7 +639,6 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         }
     }
 
-    // --- Jump Execution ---
     private void ExecuteJump()
     {
         Rb.linearVelocity = new Vector2(Rb.linearVelocity.x, 0f);
@@ -819,11 +647,9 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         ResetJumpBuffer();
     }
 
-    // --- State Callbacks / Helpers ---
     public void ResetJumpBuffer() { jumpBufferCounter = 0f; }
     public void ResetCoyoteTimer() { coyoteTimeCounter = 0f; }
 
-    // --- Visuals ---
     public void HandleSpriteFlipping(float hInput)
     {
         if (currentState == PhasingStateInstance || currentState == ClimbingStateInstance) return;
@@ -834,11 +660,9 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         }
     }
 
-    // --- Interaction ---
-    public void HandleInteractionAttempt() // Called by States
+    public void HandleInteractionAttempt() 
     {
-        // Prevent starting interaction if already in a special state
-        if (currentState == ClimbingStateInstance || currentState == PhasingStateInstance) // Add Phasing check for Dark Player
+        if (currentState == ClimbingStateInstance || currentState == PhasingStateInstance) 
             return;
 
         Collider2D[] nearbyInteractables = Physics2D.OverlapCircleAll(
@@ -848,20 +672,16 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
 
         Collider2D closestInteractableCollider = FindClosestInteractable(nearbyInteractables, InteractionCheckPointProp.position);
 
-        // --- Find IInteractable component ---
-        IInteractable interactable = closestInteractableCollider.GetComponent<IInteractable>(); // Get the interface
+        IInteractable interactable = closestInteractableCollider.GetComponent<IInteractable>(); 
 
         if (interactable != null)
         {
-            InteractionType type = interactable.InteractionType; // Get the type via the interface
+            InteractionType type = interactable.InteractionType; 
 
-            // --- Call Interact on the found object ---
-            interactable.Interact(this.gameObject); // Call the Interact method via the interface
+            interactable.Interact(this.gameObject); 
 
-            // --- Handle Player State Change based on Type (If necessary) ---
             if (type == InteractionType.Trajectory || type == InteractionType.Ladder || type == InteractionType.Rope)
             {
-                 // Get the specific component again if needed for state setup
                  TrajectoryMover trajectory = closestInteractableCollider.GetComponent<TrajectoryMover>();
                  if (trajectory != null)
                  {
@@ -870,9 +690,8 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
                  } else {
                  }
             }
-            // Buttons (and others maybe) don't require player state change - Interact() does the work.
         }
-        // else: Object on layer doesn't implement IInteractable
+
     }
 
     private Collider2D FindClosestInteractable(Collider2D[] colliders, Vector2 checkPosition)
@@ -888,23 +707,16 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         return closest;
     }
 
-    // --- Force Stop Interaction ---
     public void ForceStopInteraction()
     {
-        // Check if currently in a state that needs stopping
-        if (currentState == ClimbingStateInstance /* || currentState == RopeStateInstance etc. */)
+        if (currentState == ClimbingStateInstance)
         {
 
-            // *** ADD THIS LINE: Trigger the stop event ***
             EventManager.TriggerInteractionStop(InteractionType.Trajectory, Rb);
-            // *******************************************
 
-            // Now change state. ExitState will still run and restore gravity.
             ChangeState(AirborneStateInstance);
         }
     }
-
-    // --- Phase Ability Implementation ---
     public void TryActivatePhase()
     {
         if (phaseCooldownTimer <= 0f && currentState != PhasingStateInstance && currentState != ClimbingStateInstance)
@@ -951,15 +763,12 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
          if (currentState == PhasingStateInstance)
          {
               Vector2 endPosition = Rb.position;
-
-              // --- Modified End Sequence ---
-              // 1. Re-enable collider temporarily for depenetration checks
+              
               if(Coll != null) Coll.enabled = true;
 
-              // 2. Depenetration Check (using the now-enabled collider)
               Vector2 moveDirection = (endPosition - lastSafePosition).normalized;
               if (moveDirection == Vector2.zero) moveDirection = phaseDirectionVector;
-              float checkDistance = Coll.bounds.extents.magnitude + depenetrationPadding; // Check slightly further back
+              float checkDistance = Coll.bounds.extents.magnitude + depenetrationPadding; 
               RaycastHit2D hit = Physics2D.Raycast(endPosition, -moveDirection, checkDistance, solidLayers);
 
               if (hit.collider != null)
@@ -968,33 +777,22 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
                   Vector2 correction = -moveDirection * pushDistance;
                   Vector2 correctedPosition = endPosition + correction;
 
-                   // Re-check overlap at corrected position (collider is enabled now)
                   Collider2D[] overlaps = Physics2D.OverlapBoxAll(correctedPosition + (Vector2)Coll.offset, Coll.bounds.size, Rb.rotation, solidLayers);
                   if (overlaps.Length == 0) {
-                      Rb.position = correctedPosition; // Teleport only if correction is safe
+                      Rb.position = correctedPosition; 
                   }
                   else {
-                       // Fallback: Try smaller correction or revert? Reverting might be safer.
-                       // Rb.position = lastSafePosition; // Revert to last known good position
-                       Rb.position = endPosition + correction * 0.5f; // Try half correction
+                 
+                       Rb.position = endPosition + correction * 0.5f; 
                   }
               }
-               // If no hit, endPosition is already safe relative to solids in the check direction
-
-              // 3. Check if grounded AFTER potential position correction
               CheckIfGrounded();
 
-              // 4. Change state (ExitState will restore collisions via SetLayerCollisions(false)
-              // and re-enable collider if it was disabled by this method before ExitState ran)
               ChangeState(IsGrounded ? GroundedStateInstance : AirborneStateInstance);
-              // -------------------------
          }
-         // If state changed mid-coroutine, ChangeState already handled stopping this coroutine
-         // and ExitState should have run.
+  
     }
 
-
-    // Method called by PhasingState to handle layer collisions
     public void SetLayerCollisions(bool ignore)
     {
         int playerLayer = gameObject.layer;
@@ -1003,57 +801,20 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
         }
         for (int i = 0; i < 32; i++)
         {
-            // Check if layer 'i' is IN the mask
             if (((1 << i) & layersToPhaseThrough.value) != 0)
             {
                 Physics2D.IgnoreLayerCollision(playerLayer, i, ignore);
 
-                // Log AFTER applying change to verify
-                // bool nowIgnoring = Physics2D.GetIgnoreLayerCollision(playerLayer, i);
-                // Debug.Log($"    -> After Setting, Now Ignoring: {nowIgnoring}");
+                
             }
-            // Optional: Log layers NOT in the mask
-            // else if (LayerMask.LayerToName(i) != "") // Only log named layers
-            // {
-            //     Debug.Log($"Target Layer '{LayerMask.LayerToName(i)}' ({i}) is NOT in mask. Skipping.");
-            // }
+            
         }
     }
 
 
-    // --- IMovementInputProvider Implementation ---
     public Vector2 GetMovementInput() { return new Vector2(HorizontalInput, VerticalInput); }
 
-    // --- Gizmos ---
-    /*
-    private void OnDrawGizmosSelected()
-    {
-         if (Coll != null)
-        {
-            Bounds colliderBounds = Coll.bounds;
-            Vector2 centerPoint = new Vector2(colliderBounds.center.x, colliderBounds.min.y);
-            Vector2 leftOrigin = centerPoint + Vector2.left * footOffset;
-            Vector2 rightOrigin = centerPoint + Vector2.right * footOffset;
-            Vector2 centerOrigin = centerPoint;
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(leftOrigin, leftOrigin + Vector2.down * groundCheckDistance);
-            Gizmos.DrawLine(centerOrigin, centerOrigin + Vector2.down * groundCheckDistance);
-            Gizmos.DrawLine(rightOrigin, rightOrigin + Vector2.down * groundCheckDistance);
-        }
-
-         Transform pointToCheck = (interactionCheckPoint != null) ? interactionCheckPoint : Transform;
-         Gizmos.color = Color.blue;
-         Gizmos.DrawWireSphere(pointToCheck.position, interactionRadius);
-    }
-    */
-
-
-    // --- Explicit Interface Implementations ---
-    // These ensure the class satisfies the interfaces it declares.
-    // Public getters above handle most of these implicitly if names match.
-    // Only need explicit for properties/methods NOT defined publicly above OR if name differs.
-
-    // IBasePlayerController
+    
     float IBasePlayerController.MaxMoveSpeed => maxMoveSpeed;
     float IBasePlayerController.MoveAcceleration => moveAcceleration;
     float IBasePlayerController.MoveDeceleration => moveDeceleration;
@@ -1066,16 +827,13 @@ public class DarkPlayerController : MonoBehaviour, IPhasingController, IInteract
     IPlayerState IBasePlayerController.GroundedStateInstance => GroundedStateInstance;
     IPlayerState IBasePlayerController.AirborneStateInstance => AirborneStateInstance;
 
-    // IPhasingController
-    // SetLayerCollisions, StartPhaseCoroutine, TryActivatePhase are public methods above
+    
     IPlayerState IPhasingController.PhasingStateInstance => PhasingStateInstance;
 
-    // IInteractionController
-    // HandleInteractionAttempt, ForceStopInteraction are public methods above
+    
     LayerMask IInteractionController.InteractableLayer => interactableLayer;
     float IInteractionController.InteractionRadiusProp => interactionRadius;
     Transform IInteractionController.InteractionCheckPointProp => interactionCheckPoint;
     IPlayerState IInteractionController.ClimbingStateInstance => ClimbingStateInstance;
 
-    // IMovementInputProvider is handled by public GetMovementInput() above
 }
