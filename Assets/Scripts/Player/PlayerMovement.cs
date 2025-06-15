@@ -2,10 +2,15 @@
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Key Bindings")]
+    [SerializeField] private KeyCode moveLeftKey = KeyCode.A;
+    [SerializeField] private KeyCode moveRightKey = KeyCode.D;
+    [SerializeField] private KeyCode jumpKey = KeyCode.W;
+
     [Header("Movement Settings")]
-    public float acceleration = 50f;     
-    public float maxSpeed = 7f;          
-    public float jumpForce = 12f;        
+    public float acceleration = 50f;
+    public float maxSpeed = 7f;
+    public float jumpForce = 12f;
 
     [Header("Ground Check Settings")]
     public Transform groundCheck;
@@ -16,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
 
     private float horizontalInput;
-    private bool isGrounded ;
+    private bool isGrounded;
     private bool wasInAir = false;
 
     void Start()
@@ -27,11 +32,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
+        if (Input.GetKey(moveRightKey))
+            horizontalInput = 1f;
+        else if (Input.GetKey(moveLeftKey))
+            horizontalInput = -1f;
+        else
+            horizontalInput = 0f;
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        if (isGrounded && Input.GetButtonDown("Jump"))
+        if (isGrounded && Input.GetKeyDown(jumpKey))
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
@@ -54,7 +64,7 @@ public class PlayerController : MonoBehaviour
     private void UpdateAnimations()
     {
         float speedX = Mathf.Abs(rb.linearVelocity.x);
-        anim.SetFloat("Speed", speedX);  
+        anim.SetFloat("Speed", speedX);
 
         if (!isGrounded && !wasInAir)
         {
