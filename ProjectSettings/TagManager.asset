@@ -19,28 +19,28 @@ TagManager:
   - Ground
   - Water
   - UI
-  - Walkable
-  - Enemy
+  - 
+  - 
   - Player
-  - Interactable
-  - Wall
-  - Platform
-  - NavMeshGeometry
+  - 
+  - 
+  - 
+  - 
   - Obstacle
-  - Projectile
-  - Turret
-  - Pushable
+  - 
+  - 
+  - 
   - Light
   - DarkPlayer
   - LightPlayer
   - DarkObstacle
-  - DarkInteractable
-  - TwoWayBarrier
+  - 
+  - 
   - EndingTrigger
   - LightGround
   - LightObstacle
-  - WallForObjects
-  - Climbable
+  - 
+  - 
   - 
   - 
   - 
